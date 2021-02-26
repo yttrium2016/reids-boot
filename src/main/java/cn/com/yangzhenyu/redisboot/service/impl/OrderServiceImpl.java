@@ -1,5 +1,6 @@
 package cn.com.yangzhenyu.redisboot.service.impl;
 
+import cn.com.yangzhenyu.redisboot.annotation.RedisLuck;
 import cn.com.yangzhenyu.redisboot.entity.Order;
 import cn.com.yangzhenyu.redisboot.entity.Shop;
 import cn.com.yangzhenyu.redisboot.mapper.OrderMapper;
@@ -21,12 +22,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private ShopMapper shopMapper;
 
     @Override
+    @RedisLuck(name = "bug")
     public void bug() {
         Shop shop = shopMapper.getOne();
         Integer num = shop.getNum();
-        if (num > 0){
-            shopMapper.update(num-1);
-            this.getBaseMapper().saveOrder(shop.getId(),new Random().nextInt(10000));
+        if (num > 0) {
+            shopMapper.update(num - 1);
+            this.getBaseMapper().saveOrder(shop.getId(), new Random().nextInt(10000));
+        }else {
+            throw new RuntimeException("庫存不足");
         }
     }
 }

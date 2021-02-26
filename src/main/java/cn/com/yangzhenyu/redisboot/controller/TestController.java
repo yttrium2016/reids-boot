@@ -30,7 +30,7 @@ public class TestController {
             return "ok";
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            return e.getMessage();
         }
     }
 }
