@@ -7,6 +7,9 @@ spring:
   redis:
     port: 6379
     host: 10.10.10.228
+    database: 0
+    password:
+    timeout: 6000ms
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**.xml
   type-aliases-package: cn.com.yangzhenyu.*.entity

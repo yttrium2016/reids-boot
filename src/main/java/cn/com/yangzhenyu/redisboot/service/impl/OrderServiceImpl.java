@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
@@ -21,16 +22,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Autowired
     private ShopMapper shopMapper;
 
+    private ReentrantLock reentrantLock = new ReentrantLock();
+
     @Override
-    @RedisLuck(name = "bug")
+    @RedisLuck("luck")
     public void bug() {
         Shop shop = shopMapper.getOne();
         Integer num = shop.getNum();
         if (num > 0) {
             shopMapper.update(num - 1);
             this.getBaseMapper().saveOrder(shop.getId(), new Random().nextInt(10000));
-        }else {
+        } else {
             throw new RuntimeException("庫存不足");
         }
+    }
+
+    @Override
+    @RedisLuck("luck")
+    public void buy() {
+        // ....
     }
 }

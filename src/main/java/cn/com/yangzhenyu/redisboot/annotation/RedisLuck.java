@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RedisLuck {
-    String name() default "redis_luck";
+    String value() default "redis_luck";
 }

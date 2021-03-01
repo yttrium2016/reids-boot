@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.Redisson;
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,12 @@ import java.util.concurrent.TimeUnit;
 public class RedisLuckAop {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     private RedissonClient redissonClient;
 
-    @Around("@annotation(cn.com.yangzhenyu.redisboot.annotation.RedisLuck)")
+//    @Around("@annotation(cn.com.yangzhenyu.redisboot.annotation.RedisLuck)")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Object result = null;
 
@@ -38,7 +39,7 @@ public class RedisLuckAop {
         if (null == redisLuck) {
             return point.proceed();
         }
-        String key = redisLuck.name();
+        String key = redisLuck.value();
         String value = UUID.randomUUID().toString();
 
         try {
@@ -56,7 +57,7 @@ public class RedisLuckAop {
         return result;
     }
 
-//    @Around("@annotation(cn.com.yangzhenyu.redisboot.annotation.RedisLuck)")
+    @Around("@annotation(cn.com.yangzhenyu.redisboot.annotation.RedisLuck)")
     public Object aopRedisson(ProceedingJoinPoint point) throws Throwable{
         Object result = null;
 
@@ -66,7 +67,7 @@ public class RedisLuckAop {
             return point.proceed();
         }
 
-        RLock lock = redissonClient.getLock(redisLuck.name());
+        RLock lock = redissonClient.getLock(redisLuck.value());
 
         try {
             lock.lock(10,TimeUnit.SECONDS);
